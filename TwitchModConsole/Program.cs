@@ -75,8 +75,15 @@ public static class Program {
                 else if (key == ConsoleKey.S)
                 {
                     var message = AnsiConsole.Ask<string>("[bold green]Send[/] :");
-                    Twitch.TwitchClient!.SendMessage(selectedChannel, message);
-                    AnsiConsole.MarkupLineInterpolated($"[bold red]{username}[/] : {message}");
+                    if (message == "q")
+                    {
+                        AnsiConsole.MarkupLine("[red]Cancelling Message...[/]");
+                    }
+                    else
+                    {
+                        Twitch.TwitchClient!.SendMessage(selectedChannel, message);
+                        AnsiConsole.MarkupLineInterpolated($"[bold red]{username}[/] : {message}");
+                    }
                 }
 
                 CommandHandler.IsCommandQueued = false;
