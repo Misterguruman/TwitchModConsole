@@ -37,6 +37,7 @@ public static class Program {
         if (channels.Count == 0)
         {
             var channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
+            selectedChannel = channel;
             channels.Add(channel);
             await File.WriteAllLinesAsync("channels.txt", channels);
         }
@@ -55,12 +56,13 @@ public static class Program {
         if (selectedChannel == "Add Channel +")
         {
             var channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
+            selectedChannel = channel;
             channels.Remove("Add Channel +");
             channels.Add(channel);
             await File.WriteAllLinesAsync("channels.txt", channels);
         }
 
-        Twitch twitch = new Twitch(token, username, selectedChannel!);
+        Twitch.StartTwitch(token, username, selectedChannel!);
 
         while (true)
         {
