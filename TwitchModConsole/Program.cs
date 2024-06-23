@@ -68,7 +68,13 @@ public static class Program {
         {
             var input = Console.ReadKey();
 
-            if (input.Key == ConsoleKey.Q) break;
+            if (input.Key == ConsoleKey.Q) 
+                break;
+            else if (input.Key == ConsoleKey.S)
+            {
+                var message = AnsiConsole.Ask<string>("[bold green]Send[/] :");
+                Twitch.TwitchClient!.SendMessage(selectedChannel, message);
+            }
         }
         
         Twitch.StopTwitch();

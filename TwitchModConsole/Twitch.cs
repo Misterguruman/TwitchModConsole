@@ -13,8 +13,9 @@ internal static class Twitch
 {
     private static Task? _twitchTask;
     private static readonly CancellationTokenSource CancellationTokenSource = new();
-    private static readonly ConcurrentQueue<Tuple<string, string>> ChatEntries = new();
-    private static TwitchClient? TwitchClient { get; set; }
+    internal static readonly ConcurrentQueue<Tuple<string, string>> ChatEntries = new();
+    internal static readonly ConcurrentQueue<ConsoleKey> CommandQueue = new();
+    internal static TwitchClient? TwitchClient { get; set; }
 
     internal static void StartTwitch(string token, string username, string channel)
     {
