@@ -52,33 +52,37 @@ internal static class TwitchOAuth
         tokenListener.Prefixes.Add(_tokenUri);
         tokenListener.Start();
 
-        Console.WriteLine("Listening for OAuth2 response...");
+        await AnsiConsole.Status()
+            .Spinner(Spinner.Known.Shark)
+            .StartAsync("Listening for OAuth2 response...", async ctx =>
+            {
+                // Handle the initial redirect from Twitch
+                var redirectContextTask = redirectListener.GetContextAsync();
+                var tokenContextTask = tokenListener.GetContextAsync();
 
-        // Handle the initial redirect from Twitch
-        var redirectContextTask = redirectListener.GetContextAsync();
-        var tokenContextTask = tokenListener.GetContextAsync();
+                var context = await redirectContextTask;
+                var response = context.Response;
 
-        var context = await redirectContextTask;
-        var response = context.Response;
+                var buffer = System.Text.Encoding.UTF8.GetBytes(_responseString);
+                response.ContentLength64 = buffer.Length;
+                var output = response.OutputStream;
+                await output.WriteAsync(buffer, 0, buffer.Length);
+                output.Close();
 
-        var buffer = System.Text.Encoding.UTF8.GetBytes(_responseString);
-        response.ContentLength64 = buffer.Length;
-        var output = response.OutputStream;
-        await output.WriteAsync(buffer, 0, buffer.Length);
-        output.Close();
+                ctx.Status("Waiting for token response...");
 
-        // Wait for the token POST request
-        var tokenContext = await tokenContextTask;
+                var tokenContext = await tokenContextTask;
 
-        using var reader = new System.IO.StreamReader(tokenContext.Request.InputStream, tokenContext.Request.ContentEncoding);
-        var tokenData = await reader.ReadToEndAsync();
+                using var reader = new System.IO.StreamReader(tokenContext.Request.InputStream, tokenContext.Request.ContentEncoding);
+                var tokenData = await reader.ReadToEndAsync();
 
-        var tokenParams = System.Web.HttpUtility.ParseQueryString(tokenData);
-        var token = tokenParams["access_token"];
+                var tokenParams = System.Web.HttpUtility.ParseQueryString(tokenData);
+                var token = tokenParams["access_token"];
 
-        Console.WriteLine(token is not null ? $"Access token: {token}" : "Authorization failed or access token not found.");
+                AnsiConsole.WriteLine(token is not null ? $"Access token: {token}" : "Authorization failed or access token not found.");
+         
+            });
 
-        // Stop both listeners
         redirectListener.Stop();
         tokenListener.Stop();
     }

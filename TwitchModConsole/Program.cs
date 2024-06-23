@@ -8,5 +8,6 @@ public static class Program {
     static async Task Main(string[] args)
     {
        AnsiConsole.WriteLine("Welcome to TwitchModConsole :)");
+       await TwitchOAuth.GetOAuthToken();
     }
 }
