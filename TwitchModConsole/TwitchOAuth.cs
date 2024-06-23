@@ -37,7 +37,7 @@ internal static class TwitchOAuth
         </html>
         """;
 
-    internal static async Task GetOAuthToken() {
+    internal static async Task<string?> GetOAuthToken() {
         var state = Guid.NewGuid().ToString();
         var authorizationUrl = $"https://id.twitch.tv/oauth2/authorize?response_type=token&client_id={_clientId}&redirect_uri={_redirectUri}&scope={_scope}&state={state}";
 
@@ -52,7 +52,7 @@ internal static class TwitchOAuth
         tokenListener.Prefixes.Add(_tokenUri);
         tokenListener.Start();
 
-        await AnsiConsole.Status()
+        var token = await AnsiConsole.Status()
             .Spinner(Spinner.Known.Shark)
             .StartAsync("Listening for OAuth2 response...", async ctx =>
             {
@@ -80,10 +80,12 @@ internal static class TwitchOAuth
                 var token = tokenParams["access_token"];
 
                 AnsiConsole.WriteLine(token is not null ? $"Access token: {token}" : "Authorization failed or access token not found.");
-         
+
+                return token;   
             });
 
         redirectListener.Stop();
         tokenListener.Stop();
+        return token;
     }
 }
