@@ -27,5 +27,39 @@ public static class Program {
             File.WriteAllText("token.txt", token);
         }
 
+        var username = AnsiConsole.Ask<string>("Enter your [purple]Twitch username[/] : ");
+        
+        List<string> channels = [];
+        string? selectedChannel = null;
+        if (File.Exists("channels.txt"))
+        {
+            File.ReadAllLines("channels.txt").ToList();
+        }
+
+        if (channels.Count == 0)
+        {
+            string channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
+            channels.Add(channel);
+            File.WriteAllLines("channels.txt", channels);
+        }
+        else
+        {
+            channels.Add("Add Channel +");
+            selectedChannel = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Select a channel to join")
+                    .PageSize(10)
+                    .AddChoices(channels)
+                );
+
+        }
+
+        if (selectedChannel == "Add Channel +")
+        {
+            string channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
+            channels.Remove("Add Channel +");
+            channels.Add(channel);
+            File.WriteAllLines("channels.txt", channels);
+        }
     }
 }
