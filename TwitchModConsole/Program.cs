@@ -66,7 +66,11 @@ public static class Program {
 
         while (true)
         {
-            await Task.Delay(200);
+            var input = Console.ReadKey();
+
+            if (input.Key == ConsoleKey.Q) break;
         }
+        
+        Twitch.StopTwitch();
     }
 }
