@@ -25,7 +25,7 @@ public static class Program {
                 Environment.Exit(1);
             }
 
-            File.WriteAllText("token.txt", token);
+            await File.WriteAllTextAsync("token.txt", token);
         }
 
         var username = AnsiConsole.Ask<string>("Enter your [purple]Twitch username[/] : ");
@@ -39,9 +39,9 @@ public static class Program {
 
         if (channels.Count == 0)
         {
-            string channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
+            var channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
             channels.Add(channel);
-            File.WriteAllLines("channels.txt", channels);
+            await File.WriteAllLinesAsync("channels.txt", channels);
         }
         else
         {
@@ -57,10 +57,10 @@ public static class Program {
 
         if (selectedChannel == "Add Channel +")
         {
-            string channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
+            var channel = AnsiConsole.Ask<string>("Enter the [purple]Twitch channel[/] you want to join : ");
             channels.Remove("Add Channel +");
             channels.Add(channel);
-            File.WriteAllLines("channels.txt", channels);
+            await File.WriteAllLinesAsync("channels.txt", channels);
         }
 
         Twitch twitch = new Twitch(token, username, selectedChannel!);
