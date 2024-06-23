@@ -34,9 +34,10 @@ internal static class Twitch
             TwitchClient = new TwitchClient(customClient);
             TwitchClient.Initialize(credentials, channel);
 
-            TwitchClient.OnJoinedChannel += Client_OnJoinedChannel;
+            TwitchClient.OnJoinedChannel   += Client_OnJoinedChannel;
             TwitchClient.OnMessageReceived += Client_OnMessageReceived;
-            TwitchClient.OnConnected += Client_OnConnected;
+            TwitchClient.OnConnected       += Client_OnConnected;
+            TwitchClient.OnNewSubscriber   += Client_OnNewSubscriber;
 
             TwitchClient.Connect();
         }, CancellationTokenSource.Token);
@@ -58,6 +59,16 @@ internal static class Twitch
     {
         ChatEntries.Enqueue(messageEvent);
         //AnsiConsole.MarkupLineInterpolated($"[{messageEvent.ChatMessage.ColorHex}] {messageEvent.ChatMessage.Username} [/]: {messageEvent.ChatMessage.Message}");
+    }
+    private static void Client_OnNewSubscriber(object? sender, OnNewSubscriberArgs e)
+    {
+        if (e.Channel == "thicccuts")
+        {
+            TwitchClient!.SendMessage(e.Channel, $"Welcome {e.Subscriber.DisplayName} to the THICCFAM!");
+            TwitchClient!.SendMessage(e.Channel, $"yarrBot thiccc28HYPE thiccc28HYPE thiccc28HYPE thiccc28HYPE thiccc28HYPE");
+            AnsiConsole.MarkupLineInterpolated($"[bold green]{e.Subscriber.DisplayName}[/] has subscribed! Sending celebration messages...");
+        }
+        
     }
     public static void StopTwitch()
     {
