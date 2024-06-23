@@ -1,4 +1,5 @@
 ﻿using Spectre.Console;
+using TwitchLib.Client.Events;
 
 namespace TwitchModConsole;
 
@@ -63,20 +64,37 @@ public static class Program {
         }
 
         Twitch.StartTwitch(token, username, selectedChannel!);
+        CommandHandler.StartCommandCapture();
 
         while (true)
         {
-            var input = Console.ReadKey();
-
-            if (input.Key == ConsoleKey.Q) 
-                break;
-            else if (input.Key == ConsoleKey.S)
+            if (Twitch.CommandQueue.TryDequeue(out var key))
             {
-                var message = AnsiConsole.Ask<string>("[bold green]Send[/] :");
-                Twitch.TwitchClient!.SendMessage(selectedChannel, message);
+                if (key == ConsoleKey.Q)
+                    break;
+                else if (key == ConsoleKey.S)
+                {
+                    var message = AnsiConsole.Ask<string>("[bold green]Send[/] :");
+                    Twitch.TwitchClient!.SendMessage(selectedChannel, message);
+                    AnsiConsole.MarkupLineInterpolated($"[bold red]{username}[/] : {message}");
+                }
+
+                CommandHandler.IsCommandQueued = false;
             }
+            else if (Twitch.ChatEntries.TryDequeue(out OnMessageReceivedArgs? messageEvent))
+            {
+                if (messageEvent is null)
+                    continue;
+
+                AnsiConsole.MarkupLineInterpolated($"[{messageEvent.ChatMessage.ColorHex}] {messageEvent.ChatMessage.Username} [/] : {messageEvent.ChatMessage.Message.EscapeMarkup()}");
+            }
+
+            
+
+
         }
         
         Twitch.StopTwitch();
+        CommandHandler.StopCommandCapture();
     }
 }

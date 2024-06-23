@@ -13,7 +13,7 @@ internal static class Twitch
 {
     private static Task? _twitchTask;
     private static readonly CancellationTokenSource CancellationTokenSource = new();
-    internal static readonly ConcurrentQueue<Tuple<string, string>> ChatEntries = new();
+    internal static readonly ConcurrentQueue<OnMessageReceivedArgs> ChatEntries = new();
     internal static readonly ConcurrentQueue<ConsoleKey> CommandQueue = new();
     internal static TwitchClient? TwitchClient { get; set; }
 
@@ -46,18 +46,18 @@ internal static class Twitch
 
     private static void Client_OnConnected(object? sender, OnConnectedArgs e)
     {
-        ChatEntries.Enqueue(new Tuple<string, string>($"[bold green]Connected[/]", "\n"));
+        AnsiConsole.MarkupLineInterpolated($"[bold green]Connected[/]");
     }
 
     private static void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
     {
-        ChatEntries.Enqueue(new Tuple<string, string>($"[bold green]Success! Connected to Twitch[/]", "\n"));
+        AnsiConsole.MarkupLineInterpolated($"[bold green]Success![/] Connected to [bold purple]Twitch[/]");
     }
 
     private static void Client_OnMessageReceived(object? sender, OnMessageReceivedArgs messageEvent)
     {
-        ChatEntries.Enqueue(new Tuple<string, string>($"[{messageEvent.ChatMessage.ColorHex}] {messageEvent.ChatMessage.Username} [/]", $"{messageEvent.ChatMessage.Message}\n"));
-        AnsiConsole.MarkupLineInterpolated($"[{messageEvent.ChatMessage.ColorHex}] {messageEvent.ChatMessage.Username} [/]: {messageEvent.ChatMessage.Message}");
+        ChatEntries.Enqueue(messageEvent);
+        //AnsiConsole.MarkupLineInterpolated($"[{messageEvent.ChatMessage.ColorHex}] {messageEvent.ChatMessage.Username} [/]: {messageEvent.ChatMessage.Message}");
     }
     public static void StopTwitch()
     {

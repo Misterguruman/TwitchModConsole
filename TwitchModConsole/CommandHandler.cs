@@ -11,6 +11,7 @@ internal static class CommandHandler
 {
     private static Task? _commandCaptureTask;
     private static readonly CancellationTokenSource CancellationTokenSource = new();
+    internal static bool IsCommandQueued = false;
 
     internal static void StartCommandCapture()
     {
@@ -18,10 +19,15 @@ internal static class CommandHandler
         {
             while (!CancellationTokenSource.Token.IsCancellationRequested)
             {
-                if (Console.KeyAvailable)
+                if (!IsCommandQueued)
                 {
                     var key = Console.ReadKey(intercept: true);
                     Twitch.CommandQueue.Enqueue(key.Key);
+                    IsCommandQueued = true;
+                }
+                else
+                {
+                    Task.Delay(100).Wait();
                 }
             }
         });
