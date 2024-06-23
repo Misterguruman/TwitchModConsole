@@ -27,6 +27,5 @@ public static class Program {
             File.WriteAllText("token.txt", token);
         }
 
-        await TwitchOAuth.GetOAuthToken();
     }
 }
