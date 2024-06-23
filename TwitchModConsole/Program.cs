@@ -1,7 +1,4 @@
-﻿
-using System.Net;
-using Spectre.Console;
-using TwitchLib.Client;
+﻿using Spectre.Console;
 
 namespace TwitchModConsole;
 
