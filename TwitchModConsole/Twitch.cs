@@ -19,8 +19,8 @@ internal static class Twitch
 
     internal static void StartTwitch(string token, string username, string channel)
     {
-        #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously because this will persist in _twitchTask;
-        _twitchTask = Task.Run(async () =>
+        
+        _twitchTask = Task.Run( () =>
         {
             var credentials = new ConnectionCredentials(username, token);
             var clientOptions = new ClientOptions
