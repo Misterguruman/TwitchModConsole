@@ -56,5 +56,6 @@ internal class Twitch
     private void Client_OnMessageReceived(object? sender, OnMessageReceivedArgs messageEvent)
     {
         ChatOutput.Add(new Tuple<string, string>($"[{messageEvent.ChatMessage.ColorHex}] {messageEvent.ChatMessage.Username} [/]", $"{messageEvent.ChatMessage.Message}\n"));
+        //AnsiConsole.MarkupLineInterpolated($"[{messageEvent.ChatMessage.ColorHex}] {messageEvent.ChatMessage.Username} [/]: {messageEvent.ChatMessage.Message}");
     }
 }

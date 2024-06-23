@@ -1,6 +1,7 @@
 ﻿
 using System.Net;
 using Spectre.Console;
+using TwitchLib.Client;
 
 namespace TwitchModConsole;
 
@@ -33,7 +34,7 @@ public static class Program {
         string? selectedChannel = null;
         if (File.Exists("channels.txt"))
         {
-            File.ReadAllLines("channels.txt").ToList();
+            channels = File.ReadAllLines("channels.txt").ToList();
         }
 
         if (channels.Count == 0)
@@ -60,6 +61,13 @@ public static class Program {
             channels.Remove("Add Channel +");
             channels.Add(channel);
             File.WriteAllLines("channels.txt", channels);
+        }
+
+        Twitch twitch = new Twitch(token, username, selectedChannel!);
+
+        while (true)
+        {
+            await Task.Delay(200);
         }
     }
 }
